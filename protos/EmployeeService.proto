@@ -8,31 +8,31 @@ option objc_class_prefix = "TEMP";
 package employee_service;
 
 service EmployeeService {
-  
+
   // Create an employee record
   rpc CreateEmployee (EmployeeData) returns (StatusReply) {}
-  
+
   // Get an employee´s data
   rpc GetEmployeeDataFromID (EmployeeID) returns (EmployeeData) {}
-  
+
   // Update an employee´s title/position
   rpc UpdateEmployeeTitle (EmployeeTitleUpdate) returns (StatusReply) {}
-  
+
   // Delete an employee
   rpc DeleteEmployee (EmployeeID) returns (StatusReply) {}
 
   // List all employees
   rpc ListAllEmployees (EmptyMessage) returns (EmployeeDataList) {}
-  
+
   // Sort the list of employees by a given criteria
   rpc SortEmployees (SortCriteria) returns (EmployeeDataList) {}
-  
+
   // Add a new employee
   rpc AddEmployee (NewEmployeeData) returns (StatusReply) {}
- 
- // Search for employees by name 
- rpc SearchEmployeesByName (EmployeeName) returns (EmployeeDataList) {}
-  
+
+  // Search for employees by name 
+  rpc SearchEmployeesByName (EmployeeName) returns (EmployeeDataList) {}
+
 }
 
 message NewEmployeeData {
