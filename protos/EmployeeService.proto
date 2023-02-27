@@ -24,6 +24,32 @@ service EmployeeService {
   // List all employees
   rpc ListAllEmployees (EmptyMessage) returns (EmployeeDataList) {}
   
+  // Sort the list of employees by a given criteria
+  rpc SortEmployees (SortCriteria) returns (EmployeeDataList) {}
+  
+  // Add a new employee
+  rpc AddEmployee (NewEmployeeData) returns (StatusReply) {}
+ 
+ // Search for employees by name 
+ rpc SearchEmployeesByName (EmployeeName) returns (EmployeeDataList) {}
+  
+}
+
+message NewEmployeeData {
+  string name = 1;
+  string title = 2;
+}
+
+message EmployeeName {
+  string name = 1;
+}
+
+message SortCriteria {
+  enum Criteria {
+    NAME = 0;
+    ID = 1;
+  }
+  Criteria criteria = 1;
 }
 
 message EmployeeData {
