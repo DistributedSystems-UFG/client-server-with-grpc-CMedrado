@@ -18,10 +18,10 @@ empDB = [
     }
 ]
 
-
 class EmployeeServer(EmployeeService_pb2_grpc.EmployeeServiceServicer):
 
     def CreateEmployee(self, request, context):
+
         dat = {
             'id': request.id,
             'name': request.name,
@@ -32,26 +32,16 @@ class EmployeeServer(EmployeeService_pb2_grpc.EmployeeServiceServicer):
 
     def GetEmployeeDataFromID(self, request, context):
         usr = [emp for emp in empDB if (emp['id'] == request.id)]
-        if len(usr) == 0:
-            context.set_details('Employee not found')
-            context.set_code(grpc.StatusCode.NOT_FOUND)
-            return EmployeeService_pb2.EmployeeData()
         return EmployeeService_pb2.EmployeeData(id=usr[0]['id'], name=usr[0]['name'], title=usr[0]['title'])
 
     def UpdateEmployeeTitle(self, request, context):
-        usr = [emp for emp in empDB if emp['id'] == request.id]
-        if len(usr) == 0:
-            context.set_details('Employee not found')
-            context.set_code(grpc.StatusCode.NOT_FOUND)
-            return EmployeeService_pb2.StatusReply(status='NOK')
+        usr = [emp for emp in empDB if (emp['id'] == request.id)]
         usr[0]['title'] = request.title
         return EmployeeService_pb2.StatusReply(status='OK')
 
     def DeleteEmployee(self, request, context):
         usr = [emp for emp in empDB if (emp['id'] == request.id)]
         if len(usr) == 0:
-            context.set_details('Employee not found')
-            context.set_code(grpc.StatusCode.NOT_FOUND)
             return EmployeeService_pb2.StatusReply(status='NOK')
 
         empDB.remove(usr[0])
@@ -64,26 +54,22 @@ class EmployeeServer(EmployeeService_pb2_grpc.EmployeeServiceServicer):
             list.employee_data.append(emp_data)
         return list
 
-    def SearchEmployeeByName(self, request, context):
-        emp_name = request.name.lower()
-        results = [
-            emp for emp in empDB if emp_name in emp['name'].lower()
-        ]
+    def SearchEmployeesByName(self, request, context):
         list = EmployeeService_pb2.EmployeeDataList()
-        for item in results:
-            emp_data = EmployeeService_pb2.EmployeeData(
-                id=item['id'], name=item['name'], title=item['title']
-            )
-            list.employee_data.append(emp_data)
+        for item in empDB:
+            if request.name.lower() in item['name'].lower():
+                emp_data = EmployeeService_pb2.EmployeeData(id=item['id'], name=item['name'], title=item['title'])
+                list.employee_data.append(emp_data)
         return list
 
-    def SortEmployeesByName(self, request, context):
-        sorted_emps = sorted(empDB, key=lambda emp: emp['name'])
+    def SortEmployees(self, request, context):
         list = EmployeeService_pb2.EmployeeDataList()
-        for item in sorted_emps:
-            emp_data = EmployeeService_pb2.EmployeeData(
-                id=item['id'], name=item['name'], title=item['title']
-            )
+        criteria = request.criteria
+        empDB_sorted = sorted(empDB,
+                              key=lambda emp: emp[
+                                  'name' if criteria == EmployeeService_pb2.SortCriteria.NAME else 'id'])
+        for item in empDB_sorted:
+            emp_data = EmployeeService_pb2.EmployeeData(id=item['id'], name=item['name'], title=item['title'])
             list.employee_data.append(emp_data)
         return list
 
@@ -94,6 +80,7 @@ def serve():
     server.add_insecure_port('[::]:50051')
     server.start()
     server.wait_for_termination()
+
 
 if __name__ == '__main__':
     logging.basicConfig()
