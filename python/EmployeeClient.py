@@ -31,50 +31,17 @@ def run():
 
         # List all employees
         response = stub.ListAllEmployees(EmployeeService_pb2.EmptyMessage())
-        print('All employees:')
-        for emp in response.employee_data:
-            print(f"ID: {emp.id}, Name: {emp.name}, Title: {emp.title}")
+        print('All employees: ' + str(response))
 
-        # Search for an employee by name
-        name_to_search = 'Jose da Silva'
-        found = False
-        for emp in response.employee_data:
-            if emp.name == name_to_search:
-                found = True
-                print(f"{name_to_search} found. ID: {emp.id}, Title: {emp.title}")
-        if not found:
-            print(f"{name_to_search} not found.")
+        # Search for employees by name
+        search_request = EmployeeService_pb2.EmployeeName(name='Saravanan')
+        response = stub.SearchEmployeesByName(search_request)
+        print('Searched employees: ' + str(response))
 
-        # Remove an employee by ID
-        id_to_remove = 101
-        found = False
-        for emp in response.employee_data:
-            if emp.id == id_to_remove:
-                found = True
-                response = stub.DeleteEmployee(EmployeeService_pb2.EmployeeID(id=id_to_remove))
-                print(f"Employee with ID {id_to_remove} removed. Status: {response.status}")
-                break
-        if not found:
-            print(f"Employee with ID {id_to_remove} not found.")
-
-        # Add a new employee at a specific position in the list
-        new_employee = {'id': 401, 'name': 'Maria Oliveira', 'title': 'Database Administrator'}
-        index_to_insert = 1
-        emp_data_list = response.employee_data
-        emp_data_list.insert(index_to_insert, EmployeeService_pb2.EmployeeData(
-            id=new_employee['id'], name=new_employee['name'], title=new_employee['title']))
-        response = stub.ListAllEmployees(EmployeeService_pb2.EmptyMessage())
-        print('All employees after insertion:')
-        for emp in response.employee_data:
-            print(f"ID: {emp.id}, Name: {emp.name}, Title: {emp.title}")
-
-        # Sort the list of employees by name
-        emp_data_list = sorted(emp_data_list, key=lambda emp: emp.name)
-        response = EmployeeService_pb2.EmployeeDataList()
-        response.employee_data.extend(emp_data_list)
-        print('All employees sorted by name:')
-        for emp in response.employee_data:
-            print(f"ID: {emp.id}, Name: {emp.name}, Title: {emp.title}")
+        # Sort employees by name
+        sort_request = EmployeeService_pb2.SortCriteria(criteria=EmployeeService_pb2.SortCriteria.NAME)
+        response = stub.SortEmployees(sort_request)
+        print('Sorted employees: ' + str(response))
 
 
 if __name__ == '__main__':
