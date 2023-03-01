@@ -1,6 +1,6 @@
 # gRPC-WS-Example
 
-(video)[https://youtu.be/kc5ZfytJzIw]
+[video](https://youtu.be/kc5ZfytJzIw)
 
 This is the gRPC equivalent of the RESTful WS example, meant to illustrate the difference between generic interfaces (i.e., RESTful) and application-specific interfaces.
 
